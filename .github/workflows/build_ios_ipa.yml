@@ -1,0 +1,71 @@
+name: Build iOS IPA (Customer App)
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_note:
+        description: 'Build note (optional)'
+        required: false
+        default: 'Customer App IPA Build'
+
+jobs:
+  build-ios:
+    name: Build Flutter iOS IPA
+    runs-on: macos-latest
+
+    steps:
+      # ─── 1. Checkout code ─────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ─── 2. Setup Flutter ─────────────────────────────────────────
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.3'
+          channel: 'stable'
+          cache: true
+
+      # ─── 3. Copy Firebase config files ───────────────────────────
+      - name: Copy GoogleService-Info.plist
+        run: |
+          cp customer/ios/Runner/GoogleService-Info.plist customer/ios/Runner/GoogleService-Info.plist || true
+        continue-on-error: true
+
+      # ─── 4. Flutter pub get ───────────────────────────────────────
+      - name: Get Flutter dependencies
+        run: flutter pub get
+        working-directory: customer
+
+      # ─── 5. Install CocoaPods dependencies ───────────────────────
+      - name: Install CocoaPods
+        run: |
+          gem install cocoapods
+          pod install --repo-update
+        working-directory: customer/ios
+
+      # ─── 6. Build iOS (no codesign) ───────────────────────────────
+      - name: Build iOS IPA (no code signing)
+        run: |
+          flutter build ios --release --no-codesign
+        working-directory: customer
+
+      # ─── 7. Create IPA from .app ──────────────────────────────────
+      - name: Package .app into IPA
+        run: |
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -r customer_app.ipa Payload
+          rm -rf Payload
+        working-directory: customer
+
+      # ─── 8. Upload IPA as artifact ────────────────────────────────
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: customer-app-ipa
+          path: customer/customer_app.ipa
+          retention-days: 30
+
+      - name: ✅ Build complete
+        run: echo "IPA built successfully! Download from the Actions artifacts."

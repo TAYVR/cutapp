@@ -1,0 +1,34 @@
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+*.iml
+
+# Android & iOS sensitive files
+**/google-services.json
+**/GoogleService-Info.plist
+*.json
+*.plist
+!**/pubspec.json
+
+# iOS Pods & build
+**/ios/.symlinks/
+**/ios/Pods/
+**/ios/Podfile.lock
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/.generated/
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# IDE & OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+node_modules/
+original
+**/original
