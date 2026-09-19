@@ -33,7 +33,9 @@ jobs:
 
       # ─── 4. Flutter pub get ───────────────────────────────────────
       - name: Get Flutter dependencies
-        run: flutter pub get
+        run: |
+          rm -rf .flutter-plugins .flutter-plugins-dependencies .dart_tool/pub/
+          flutter pub get
         working-directory: customer
 
       # ─── 5. Install CocoaPods ─────────────────────────────────────
