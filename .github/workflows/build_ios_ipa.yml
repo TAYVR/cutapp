@@ -36,12 +36,9 @@ jobs:
         run: flutter pub get
         working-directory: customer
 
-      # ─── 5. Install CocoaPods dependencies ───────────────────────
-      - name: Install CocoaPods
-        run: |
-          gem install cocoapods
-          pod install --repo-update
-        working-directory: customer/ios
+      # ─── 5. Install CocoaPods ─────────────────────────────────────
+      - name: Setup CocoaPods
+        run: gem install cocoapods
 
       # ─── 6. Build iOS (no codesign) ───────────────────────────────
       - name: Build iOS IPA (no code signing)
